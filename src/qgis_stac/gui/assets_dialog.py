@@ -41,9 +41,13 @@ from ..api.models import (
 )
 
 from ..definitions.constants import (
+    AZURE_URI_PREFIX,
+    AZURE_VSI_PREFIX,
     GDAL_METADATA_NAME,
     GDAL_SUBDATASETS_KEY,
-    SAS_SUBSCRIPTION_VARIABLE
+    SAS_SUBSCRIPTION_VARIABLE,
+    S3_URI_PREFIX,
+    S3_VSI_PREFIX,
 )
 
 from ..conf import (
@@ -521,6 +525,13 @@ class AssetsDialog(QtWidgets.QDialog, DialogUi):
                 return
         else:
             asset_href = f"{asset.href}"
+        
+        # if href references an s3 or azure uri, replace with GDAL
+        if asset.href.startswith(S3_URI_PREFIX):
+            asset_href = asset.href.replace(S3_URI_PREFIX, S3_VSI_PREFIX)
+        elif asset.href.startswith(AZURE_URI_PREFIX):
+            asset_href = asset.href.replace(AZURE_URI_PREFIX, AZURE_VSI_PREFIX)
+
         asset_name = asset.name or asset.title
         self.update_inputs(False)
 
